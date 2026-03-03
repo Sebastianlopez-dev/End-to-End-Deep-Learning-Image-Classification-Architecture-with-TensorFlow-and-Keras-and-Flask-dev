@@ -1,0 +1,8 @@
+{
+  "model": "MobileNetV2 Transfer Learning",
+  "loss": 0.5526939630508423,
+  "accuracy": 0.8339999914169312,
+  "precision": 0.8353133287095834,
+  "recall": 0.834,
+  "f1_score": 0.8339057892820989
+}

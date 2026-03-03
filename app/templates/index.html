@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="CIFAR-10 Image Classification — Upload images to classify them into 10 categories using a deep learning CNN model.">
+    <title>CIFAR-10 Image Classifier</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <h1>CIFAR-10 Image Classifier</h1>
+            </div>
+
+            <div class="class-tags">
+                <div class="tags-row tags-row-4">
+                    <span class="tag">✈️ Airplane</span>
+                    <span class="tag">🚗 Automobile</span>
+                    <span class="tag">🚢 Ship</span>
+                    <span class="tag">🚚 Truck</span>
+                </div>
+                <div class="tags-row tags-row-6">
+                    <span class="tag">🐦 Bird</span>
+                    <span class="tag">🐱 Cat</span>
+                    <span class="tag">🦌 Deer</span>
+                    <span class="tag">🐕 Dog</span>
+                    <span class="tag">🐸 Frog</span>
+                    <span class="tag">🐴 Horse</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Upload Form -->
+        <section class="upload-section">
+            <form action="/predict" method="POST" enctype="multipart/form-data" id="uploadForm">
+                <div class="model-selection">
+                    <label for="modelChoice" class="model-label">🧠 Choose Model:</label>
+                    <select name="model_choice" id="modelChoice" class="model-select">
+                        <option value="custom" {% if selected_model=='custom' %}selected{% endif %}>CNN Model (Custom)
+                        </option>
+                        <option value="transfer" {% if selected_model=='transfer' %}selected{% endif %}>MobileNetV2
+                            (Transfer Learning)</option>
+                    </select>
+                </div>
+
+                <div class="dropzone" id="dropzone">
+                    <div class="dropzone-content">
+                        <span class="dropzone-icon">📸</span>
+                        <p class="dropzone-text">Drag & drop images here</p>
+                        <p class="dropzone-subtext">or click to browse — supports multiple files</p>
+                    </div>
+                    <input type="file" name="files" id="fileInput" multiple accept="image/*" class="file-input">
+                </div>
+
+                <div class="file-list" id="fileList"></div>
+                <button type="submit" class="submit-btn" id="submitBtn" disabled>
+                    <span class="btn-icon">🔍</span> Classify Images
+                </button>
+            </form>
+        </section>
+
+        <!-- Results -->
+        {% if results %}
+        <section class="results-section">
+            <h2 class="results-title">🎯 Classification Results</h2>
+
+            {% for result in results %}
+            <div class="result-card">
+                <div class="result-header">
+                    <span class="filename">📄 {{ result.filename }}</span>
+                    {% if result.predictions %}
+                    <span class="top-prediction">
+                        Best: <strong>{{ result.predictions[0].class | capitalize }}</strong>
+                        ({{ "%.1f" | format(result.predictions[0].probability * 100) }}%)
+                    </span>
+                    {% endif %}
+                </div>
+
+                {% if result.error %}
+                <div class="error-msg">⚠️ Error: {{ result.error }}</div>
+                {% else %}
+                <div class="predictions">
+                    {% for pred in result.predictions %}
+                    <div class="prediction-row">
+                        <span class="pred-class">{{ pred.class | capitalize }}</span>
+                        <div class="prob-bar-container">
+                            <div class="prob-bar" style="width: {{ (pred.probability * 100) | round(1) }}%"></div>
+                        </div>
+                        <span class="pred-prob">{{ "%.1f" | format(pred.probability * 100) }}%</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </section>
+        {% endif %}
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Ironhack — Deep Learning Project | CNN Image Classification with CIFAR-10</p>
+        </footer>
+    </div>
+
+    <script>
+        // ─── Drag & Drop + File List ────────────────────
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('fileInput');
+        const fileList = document.getElementById('fileList');
+        const submitBtn = document.getElementById('submitBtn');
+
+        dropzone.addEventListener('click', () => fileInput.click());
+
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropzone.classList.add('dragover');
+        });
+
+        dropzone.addEventListener('dragleave', () => {
+            dropzone.classList.remove('dragover');
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('dragover');
+            fileInput.files = e.dataTransfer.files;
+            updateFileList();
+        });
+
+        fileInput.addEventListener('change', updateFileList);
+
+        function updateFileList() {
+            fileList.innerHTML = '';
+            const files = fileInput.files;
+            if (files.length > 0) {
+                submitBtn.disabled = false;
+                for (let f of files) {
+                    const div = document.createElement('div');
+                    div.className = 'file-item';
+                    div.textContent = `📎 ${f.name} (${(f.size / 1024).toFixed(1)} KB)`;
+                    fileList.appendChild(div);
+                }
+            } else {
+                submitBtn.disabled = true;
+            }
+        }
+
+        // ─── Submit loading state ────────────────────────
+        document.getElementById('uploadForm').addEventListener('submit', function () {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="btn-icon">⏳</span> Classifying...';
+        });
+    </script>
+</body>
+
+</html>
