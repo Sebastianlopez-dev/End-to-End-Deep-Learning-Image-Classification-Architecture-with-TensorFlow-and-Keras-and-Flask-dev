@@ -1,3 +1,14 @@
+---
+title: Cifar 10 Classifier
+emoji: 🌖
+colorFrom: yellow
+colorTo: gray
+sdk: docker
+pinned: false
+license: mit
+short_description: Flask web app for CIFAR-10 Image Classification with TensorF
+---
+
 ![logo_ironhack_blue 7](https://user-images.githubusercontent.com/23629340/40541063-a07a0a8a-601a-11e8-91b5-2f13e4e6b441.png)
 
 # Project I | Deep Learning: Image Classification with CNN
@@ -84,3 +95,4 @@ Students will build a Convolutional Neural Network (CNN) model to classify image
 - Provide guidance and resources for troubleshooting common issues during model training and evaluation.
 - Students will discuss their approaches and findings in class during assessment evaluation sessions.
 
+Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
