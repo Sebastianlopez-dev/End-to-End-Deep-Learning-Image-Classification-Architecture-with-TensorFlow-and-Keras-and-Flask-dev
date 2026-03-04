@@ -50,4 +50,4 @@ Thumbs.db
 
 # Models and large files (depending on your preference, uncomment if you don't want to push models)
 # models/*.h5
-# models/*.keras
+models/*.keras
