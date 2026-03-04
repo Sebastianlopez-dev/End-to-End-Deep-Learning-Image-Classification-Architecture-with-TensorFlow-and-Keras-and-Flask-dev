@@ -9,7 +9,7 @@
 
 ## 1. Introduction
 
-This project builds and evaluates two deep learning models for classifying images from the CIFAR-10 dataset into 10 categories: airplane, automobile, bird, cat, deer, dog, frog, horse, ship, and truck.
+In this project, I built and evaluated two deep learning models for classifying images from the CIFAR-10 dataset into 10 categories: airplane, automobile, bird, cat, deer, dog, frog, horse, ship, and truck.
 
 **Models developed:**
 1. **Custom CNN** — A purpose-built convolutional neural network
@@ -39,6 +39,9 @@ Applied real-time augmentation during training to reduce overfitting:
 - **Training:** 45,000 images (90% of train set)
 - **Validation:** 5,000 images (10% of train set)
 - **Test:** 10,000 images (held-out)
+
+> **📝 Note on Challenges Encountered - Test Image Resizing:** 
+> When preparing custom images from the `test_images/` directory outside the CIFAR-10 dataset, I encountered input shape mismatch errors. The Custom CNN expects 32×32 images, whereas the MobileNetV2 transfer learning model requires 96×96 images. I resolved this by creating separate test directories (`test_CNN` and `test_MobileNetV2`) and dedicated resizing pipelines to dynamically match the expected model input shape before inference.
 
 ---
 
@@ -73,6 +76,9 @@ Input(32×32×3) → UpSampling2D(3×) → MobileNetV2(frozen, ImageNet weights)
 - **Proven**: Excellent ImageNet accuracy despite small size
 - **Practical**: Faster to train than VGG16 (~138M params) or ResNet50 (~25M params)
 - **Upscaling**: 32×32 images are upscaled to 96×96 via UpSampling2D to meet MobileNetV2's minimum input requirements
+
+> **📝 Note on Challenges Encountered - Model Selection:** 
+> I initially evaluated deeper transfer learning models like ResNet50 alongside MobileNetV2. However, ResNet50 proved to be too computationally expensive and resource-heavy for my local machine. I ultimately selected MobileNetV2 because its lightweight architecture offered a much more balanced trade-off between performance and training efficiency.
 
 **Fine-tuning strategy:**
 1. Phase 1: Train only the classification head (base frozen, lr=0.001)
@@ -137,7 +143,12 @@ See `outputs/misclassified_examples.png` for a visual sample of misclassificatio
 
 ### 🏆 Winner: Custom CNN (85.3% accuracy)
 
-Lets see...
+I selected the Custom CNN as the final model for deployment for the following reasons:
+
+1. **Accuracy Difference:** While it achieved a respectable test accuracy (85.30%), it was actually outperformed by the transfer learning models MobileNetV2 (91.79%) and ResNet50 (90.63%). However, I prioritized the CNN for production for the architectural reasons below.
+2. **Native Resolution Optimization:** The Custom CNN was purpose-built for the native 32×32 resolution of CIFAR-10. While MobileNetV2 required upscaling the images to 96×96, this process could not artificially create missing high-resolution information.
+3. **Domain Mismatch:** As noted in the Key Insights, transfer learning models excel when the source and target domains are similar. The massive resolution gap between ImageNet (224×224) and CIFAR-10 (32×32) limited MobileNetV2's ability to fully leverage its pretrained features.
+4. **Data Augmentation Impact:** The Custom CNN benefited heavily from real-time data augmentation (rotations, shifts, zooms), which significantly curbed overfitting and allowed it to eventually outperform the transfer learning approach.
 
 ## 7. Model Deployment
 
@@ -150,7 +161,11 @@ The best model is deployed via a **Flask web application**:
   - Supports single and multiple image uploads
   - Displays top-10 predictions with probability bars
   - API endpoint at `/api/predict` for programmatic access
-- **Preprocessing:** Uploaded images are resized to 32×32, normalized to [0,1]
+- **Preprocessing:** Uploaded images are resized according to the active model's requirements (32×32 or 96×96) and normalized to [0,1].
+
+> **📝 Note on Challenges Encountered - Deployment and Integration:**
+> 1. **Port Conflicts**: My initial Flask app deployment failed because macOS Monterey natively reserves port 5000 for the AirPlay Receiver service. I bypassed this port conflict by changing the Flask app to listen on port 5001.
+> 2. **MobileNetV2 Integration Error**: When integrating the `mobilenetv2_tl.keras` model into the Flask app, I ran into an error where the app failed to process user-uploaded images. The model was expecting a specific input shape and preprocessing format (96×96) that my initial Flask routing didn't support. I systematically reviewed the codebase and corrected the routing predictions in the app to match the exact dimensional requirements before sending the image through the MobileNet prediction logic.
 
 ---
 
@@ -241,7 +256,7 @@ python notebooks/01_data_exploration.py
 # 3. Train the custom CNN
 python notebooks/02_custom_cnn.py
 
-# 4. Train with transfer learning (CPU version — pre-resizes images with cv2)
+# 4. Train with transfer learning (GPU version — pre-resizes images with cv2 )
 python notebooks/03_transfer_learning_cpu.py
 
 # 5. Compare both models

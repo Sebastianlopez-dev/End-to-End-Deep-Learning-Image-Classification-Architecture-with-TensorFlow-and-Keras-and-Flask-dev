@@ -16,6 +16,7 @@ import sys
 import json
 import numpy as np
 from flask import Flask, request, render_template, jsonify
+from werkzeug.utils import secure_filename
 from PIL import Image
 import io
 
@@ -32,7 +33,7 @@ from keras.api.utils import img_to_array
 PROJECT_ROOT = os.path.join(os.path.dirname(__file__), '..')
 
 # Try to load the best model (transfer learning first, then custom CNN)
-TRANSFER_MODEL_PATH = os.path.join(PROJECT_ROOT, 'models', 'transfer_learning.keras')
+TRANSFER_MODEL_PATH = os.path.join(PROJECT_ROOT, 'models', 'mobilenetv2_tl.keras')
 CUSTOM_MODEL_PATH = os.path.join(PROJECT_ROOT, 'models', 'custom_cnn.keras')
 
 app = Flask(__name__)
@@ -87,13 +88,7 @@ def preprocess_image(image_bytes, target_size=(32, 32)):
     """
     img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
     
-    if img.size != target_size:
-        raise ValueError(
-            f"Please check the size of your image! The selected model strictly requires "
-            f"an image size of {target_size[0]}x{target_size[1]} pixels, but your image "
-            f"is {img.size[0]}x{img.size[1]} pixels. Kindly resize your image or try a different model."
-        )
-        
+    # Automatically resize the image to the required target size
     img = img.resize(target_size)
     img_array = img_to_array(img) / 255.0
     img_array = np.expand_dims(img_array, axis=0)
@@ -159,6 +154,8 @@ def predict():
         if file.filename == '':
             continue
 
+        safe_name = secure_filename(file.filename) or 'unknown'
+
         try:
             image_bytes = file.read()
             target_size = (96, 96) if model_choice == 'transfer' else (32, 32)
@@ -166,12 +163,12 @@ def predict():
             predictions = get_predictions(img_array, model_choice, top_n=10)
 
             all_results.append({
-                'filename': file.filename,
+                'filename': safe_name,
                 'predictions': predictions
             })
         except Exception as e:
             all_results.append({
-                'filename': file.filename,
+                'filename': safe_name,
                 'error': str(e)
             })
 
@@ -200,18 +197,21 @@ def api_predict():
     for file in files:
         if file.filename == '':
             continue
+
+        safe_name = secure_filename(file.filename) or 'unknown'
+
         try:
             image_bytes = file.read()
             target_size = (96, 96) if model_choice == 'transfer' else (32, 32)
             img_array = preprocess_image(image_bytes, target_size=target_size)
             predictions = get_predictions(img_array, model_choice, top_n=10)
             all_results.append({
-                'filename': file.filename,
+                'filename': safe_name,
                 'predictions': predictions
             })
         except Exception as e:
             all_results.append({
-                'filename': file.filename,
+                'filename': safe_name,
                 'error': str(e)
             })
 
@@ -226,4 +226,5 @@ if __name__ == '__main__':
     print(f"\n 🚀 Starting Flask app at http://localhost:{port}")
     print(f"   Available Models: {', '.join([m['name'] for m in models.values()])}")
     print(f"   Classes: {', '.join(CLASS_NAMES)}")
-    app.run(host='0.0.0.0', port=port, debug=True)
+    debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
+    app.run(host='0.0.0.0', port=port, debug=debug_mode)
