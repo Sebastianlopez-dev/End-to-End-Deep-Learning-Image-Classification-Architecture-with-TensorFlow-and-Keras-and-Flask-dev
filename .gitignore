@@ -50,4 +50,5 @@ Thumbs.db
 
 # Models and large files (depending on your preference, uncomment if you don't want to push models)
 # models/*.h5
-# models/*.keras  # Commented out to allow models to be pushed to Hugging Face via LFS
+models/*.keras  
+# Commented out to allow models to be pushed to Hugging Face via LFS
