@@ -12,10 +12,13 @@
 In this project, I built and evaluated several deep learning models for classifying images from the CIFAR-10 dataset into 10 categories: airplane, automobile, bird, cat, deer, dog, frog, horse, ship, and truck. 
 
 My approach evolved through a structured sequence of experiments, mapping my journey through the following Jupyter Notebooks:
+
 1. `1. CIFAR10_Image_Classification_CNN.ipynb`
 2. `3. Trained_Transfer_Learning_Colab_Models.ipynb`
 3. `4.1 Model_Comparison_easy.ipynb`
 4. `4.2 Model_Comparison_difficult.ipynb`
+
+To keep the notebooks clean and focused on high-level workflows, the core functions for data processing, model building, training, and evaluation were deployed in the `src/` folder, as detailed in the [`src_functions_overview.md`](notebooks_knowledge&presentation/jupyter%20notebooks/src_functions_overview.md) document. This folder contains 14 specialized functions distributed across 4 Python modules (`data_loader.py`, `model_builder.py`, `train.py`, and `evaluate.py`).
 
 **Models developed:**
 1. **Custom CNN** — A purpose-built convolutional neural network tailored to the native image resolution.
@@ -23,7 +26,7 @@ My approach evolved through a structured sequence of experiments, mapping my jou
 
 ### 1.1 Data Analysis Before Processing
 
-Before beginning the modeling process, it was crucial to understand the inherent biases and limitations of the CIFAR-10 dataset itself. 
+Before beginning the modeling process, it was important to me to understand the inherent biases and limitations of the CIFAR-10 dataset itself. 
 
 The dataset contains exactly 6,000 images for each of the 10 classes, ensuring perfectly balanced training.
 
@@ -60,7 +63,7 @@ To prevent the model from immediately overfitting on the relatively small datase
 - **Validation:** 5,000 images (10% of train set)
 - **Test:** 10,000 images (held-out)
 
-> **📝 Note on Challenges Encountered - Test Image Resizing:** 
+> ** Note on Challenges Encountered - Test Image Resizing:** 
 > When preparing custom images from the `test_images/` directory outside the CIFAR-10 dataset, I encountered input shape mismatch errors. The Custom CNN expects native 32×32 images, whereas the Transfer Learning models require 96×96 images. I resolved this by dynamically resizing images based on the expected model input shape before inference.
 
 ---
