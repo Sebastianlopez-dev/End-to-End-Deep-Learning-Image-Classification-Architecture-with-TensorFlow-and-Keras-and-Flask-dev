@@ -256,11 +256,11 @@ Cifar10_Image_Classification_project
 ├── Dockerfile                          ← Docker container config
 ├── Report.md                           ← THIS current master report
 ├── src/                                ← Source modules
-│   ├── __init__.py
-│   ├── data_loader.py
-│   ├── evaluate.py
-│   ├── model_builder.py
-│   └── train.py
+│   ├── __init__.py                     ← Package initializer
+│   ├── data_loader.py                  ← Data preprocessing (load_cifar10_data, preprocess_data, create_data_augmentation_generator, get_prepared_data)
+│   ├── evaluate.py                     ← Evaluation metrics & plots (evaluate_model, plot_confusion_matrix, plot_training_history, print_evaluation_summary)
+│   ├── model_builder.py                ← Model architectures (build_custom_cnn, build_transfer_learning_model, get_model_summary)
+│   └── train.py                        ← Training pipelines & callbacks (compile_model, get_callbacks, train_model)
 ├── notebooks_knowledge&presentation/   ← Notebooks, docs & presentation materials
 │   ├── jupyter notebooks/              ← Executable pipeline Jupyter notebooks
 │   │   ├── 1. CIFAR10_Image_Classification_CNN.ipynb
