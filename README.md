@@ -1,5 +1,5 @@
 ---
-title: End-to-End Deep Learning: Image Classification Architecture and Flask Integration
+title: "End-to-End Deep Learning: Image Classification Architecture and Flask Integration"
 emoji: 🌖
 colorFrom: yellow
 colorTo: gray
