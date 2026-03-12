@@ -6,10 +6,10 @@ colorTo: gray
 sdk: docker
 pinned: false
 license: mit
-short_description: Flask web app for CIFAR-10 Image Classification with TensorFlow
+short_description: Flask web app for CIFAR-10 Image Classification with TensorFlow and Keras
 ---
 
-# 📊 CIFAR-10 Image Classification with Deep Learning
+# 📊 Flask web app for CIFAR-10 Image Classification with TensorFlow and Keras
 
 **Author:** Sebastian Lopez  
 **Environment:** Python 3.10 | TensorFlow 2.18.1 | Keras 3.6.0  
