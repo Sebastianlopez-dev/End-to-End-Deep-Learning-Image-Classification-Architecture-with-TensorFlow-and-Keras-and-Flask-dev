@@ -1,4 +1,4 @@
-# 📊 Project Report: CIFAR-10 Image Classification with Deep Learning
+# 📊 Project Report: End-to-End Deep Learning — Image Classification Architecture and Flask Integration
 
 **Author:** Sebastian Lopez  
 **Date:** February - March 2026  

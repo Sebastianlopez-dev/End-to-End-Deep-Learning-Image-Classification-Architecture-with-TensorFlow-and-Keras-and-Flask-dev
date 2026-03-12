@@ -1,15 +1,15 @@
 ---
-title: Cifar 10 Classifier
+title: End-to-End Deep Learning: Image Classification Architecture and Flask Integration
 emoji: 🌖
 colorFrom: yellow
 colorTo: gray
 sdk: docker
 pinned: false
 license: mit
-short_description: Flask web app for CIFAR-10 Image Classification with TensorFlow and Keras
+short_description: An end-to-end computer vision project featuring custom CNN architectures and professional Flask deployment.
 ---
 
-# 📊 Flask web app for CIFAR-10 Image Classification with TensorFlow and Keras
+# 📊 End-to-End Deep Learning: Image Classification Architecture and Flask Integration
 
 **Author:** Sebastian Lopez  
 **Environment:** Python 3.10 | TensorFlow 2.18.1 | Keras 3.6.0  

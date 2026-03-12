@@ -1,5 +1,5 @@
 """
-Flask Web Application for CIFAR-10 Image Classification.
+Flask Web Application for End-to-End Image Classification.
 
 This app allows users to upload one or multiple images and receive
 predictions with class probabilities from the best trained model.
