@@ -6,93 +6,95 @@ colorTo: gray
 sdk: docker
 pinned: false
 license: mit
-short_description: Flask web app for CIFAR-10 Image Classification with TensorF
+short_description: Flask web app for CIFAR-10 Image Classification with TensorFlow
 ---
 
-![logo_ironhack_blue 7](https://user-images.githubusercontent.com/23629340/40541063-a07a0a8a-601a-11e8-91b5-2f13e4e6b441.png)
+# 📊 CIFAR-10 Image Classification with Deep Learning
 
-# Project I | Deep Learning: Image Classification with CNN
+**Author:** Sebastian Lopez  
+**Environment:** Python 3.10 | TensorFlow 2.18.1 | Keras 3.6.0  
+**Dataset:** CIFAR-10 (60,000 images, 10 classes, 32×32 RGB)
 
-## Task Description
+---
 
-Students will build a Convolutional Neural Network (CNN) model to classify images from a given dataset into predefined categories/classes.
+## 🚀 Project Overview
 
-## Datasets (pick one!)
+In this project, I engineered and evaluated several deep learning architectures to classify images into 10 distinct categories. The goal was to compare a **Custom CNN** built from scratch against state-of-the-art **Transfer Learning** models like **MobileNetV2** and **ResNet50**.
 
-1. The dataset for this task is the CIFAR-10 dataset, which consists of 60,000 32x32 color images in 10 classes, with 6,000 images per class. You can download the dataset from [here](https://www.cs.toronto.edu/~kriz/cifar.html).
-2. The second dataset contains about 28,000 medium quality animal images belonging to 10 categories: dog, cat, horse, spyder, butterfly, chicken, sheep, cow, squirrel, elephant. The link is [here](https://www.kaggle.com/datasets/alessiocorrado99/animals10/data).
+### 🔗 Quick Links
+- **Deployed App**: [Hugging Face Space](https://huggingface.co/spaces/basstianlopez/CIFAR-10-Image-Classification) (Docker)
+- **Original Brief**: [IRONHACK_BRIEF.md](./IRONHACK_BRIEF.md)
+- **Source Code**: [`src/`](./src/)
 
-## Assessment Components
+---
 
-1. **Data Preprocessing**
-   - Data loading and preprocessing (e.g., normalization, resizing, augmentation).
-   - Create visualizations of some images, and labels.
+## 🔬 The Scientific Approach
 
-2. **Model Architecture**
-   - Design a CNN architecture suitable for image classification.
-   - Include convolutional layers, pooling layers, and fully connected layers.
+### 1. Data Analysis & Preprocessing
+Before modeling, I addressed the inherent biases in the CIFAR-10 dataset (60,000 balanced images).
+- **Normalization**: Scaled pixel values to [0.0, 1.0].
+- **Data Augmentation**: For the Custom CNN, I implemented real-time augmentation (rotations, shifts, zooms) to force the model to learn invariant features and prevent overfitting.
 
-3. **Model Training**
-   - Train the CNN model using appropriate optimization techniques (e.g., stochastic gradient descent, Adam).
-   - Utilize techniques such as early stopping to prevent overfitting.
+### 2. Model Architectures & Comparison
+I benchmarked three distinct architectures to find the optimal balance between accuracy and reliability:
 
-4. **Model Evaluation**
-   - Evaluate the trained model on a separate validation set.
-   - Compute and report metrics such as accuracy, precision, recall, and F1-score.
-   - Visualize the confusion matrix to understand model performance across different classes.
+#### 🟢 **Custom CNN**
+A 3-block convolutional network (Conv2D × 2 → BatchNorm → MaxPool → Dropout) specifically designed for 32×32 resolution.
+- **Accuracy**: 85.30%
+- **Strength**: Highly reliable on native low-resolution shapes without artificial upscaling.
 
-5. **Transfer Learning**
-    - Evaluate the accuracy of your model on a pre-trained models like ImagNet, VGG16, Inception... (pick one an justify your choice)
-        - You may find this [link](https://www.tensorflow.org/tutorials/images/transfer_learning_with_hub) helpful.
-        - [This](https://pytorch.org/tutorials/beginner/transfer_learning_tutorial.html) is the Pytorch version.
-    - Perform transfer learning with your chosen pre-trained models i.e., you will probably try a few and choose the best one.
+#### 🟡 **MobileNetV2 (Transfer Learning)**
+Selected for its efficiency and speed, leveraging pretrained ImageNet features.
+- **Accuracy**: 91.79%
+- **Challenge**: Requires upscaling 32×32 images to 96×96, which can introduce blur-based confusion.
 
-5. **Code Quality**
-   - Well-structured and commented code.
-   - Proper documentation of functions and processes.
-   - Efficient use of libraries and resources.
+#### 🔴 **ResNet50 (Transfer Learning)**
+The deepest architecture tested, used to extract highly complex spatial patterns.
+- **Accuracy**: 90.63%
+- **Challenge**: High memory footprint and similar upscaling sensitivities as MobileNet.
 
-6. **Report**
-   - Write a concise report detailing the approach taken, including:
-     - Description of the chosen CNN architecture.
-     - Explanation of preprocessing steps.
-     - Details of the training process (e.g., learning rate, batch size, number of epochs).
-     - Results and analysis of models performance.
-     - What is your best model. Why?
-     - Insights gained from the experimentation process.
-   - Include visualizations and diagrams where necessary.
-   
- 7. **Model deployment**
-     - Pick the best model 
-     - Build an app using Flask - Can you host somewhere other than your laptop? **+5 Bonus points if you use [Tensorflow Serving](https://www.tensorflow.org/tfx/guide/serving)**
-     - User should be able to upload one or multiples images get predictions including probabilities for each prediction
-    
+> **💡 Final Model Selection**: Despite mathematically higher raw accuracy from MobileNetV2, I selected the **Custom CNN** for production. It showed superior reliability on difficult edge cases because it processes the data at its native resolution.
 
-## Evaluation Criteria
+![Model Selection Criteria](./outputs/model_comparison_mobilenetv2_cnn.png)
+*Figure 1. Comparison demonstrates that while MobileNetV2 has higher raw accuracy, the Custom CNN is more stable across resolution-sensitive inputs.*
 
-- Accuracy of the trained models on the validation set. **30 points**
-- Clarity and completeness of the report. **20 points**
-- Quality of code implementation. **5 points**
-- Proper handling of data preprocessing and models training. **30 points**
-- Demonstration of understanding key concepts of deep learning. **5 points**
-- Model deployment. **10 points**
+---
 
- <span style="color:red; weight: bold">**Passing Score is 70 points**</span>.
+## 📈 Performance Analysis
 
-## Submission Details
+| Metric | Custom CNN | MobileNetV2 TL | ResNet50 TL |
+| :--- | :--- | :--- | :--- |
+| **Accuracy** | 85.30% | **91.79%** | 90.63% |
 
-- Deadline for submission: end of the week or as communicated by your teaching team.
-- Submit the following:
-  1. Python code files (`*.py`, `ipynb`) containing the model implementation and training process.
-  2. A data folder with 5-10 images to test the deployed model/app if hosted somewhere else other than your laptop (strongly recommended! Not a must have)
-  2. A PDF report documenting the approach, results, and analysis.
-  3. Any additional files necessary for reproducing the results (e.g., requirements.txt, README.md).
-  4. PPT presentation
+![Confusion Matrix Comparison](./outputs/transfer_learning_cm.png)
+*Figure 2. Visual analysis of misclassifications (Cats ↔ Dogs) helped drive the decision towards the more 'shape-aware' Custom CNN.*
 
-## Additional Notes
+### Key Confusion Clusters
+Visible similarities at 32x32 resolution drive most errors:
+- **Cat ↔ Dog**: Furry features are indistinguishable at low res.
+- **Airplane ↔ Ship**: Often confused due to similar blue backgrounds (sky vs. water).
 
-- Students are encourage to experiment with different architectures, hyper-parameters, and optimization techniques.
-- Provide guidance and resources for troubleshooting common issues during model training and evaluation.
-- Students will discuss their approaches and findings in class during assessment evaluation sessions.
+---
 
-Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
+## 🛠️ Deployment & Engineering
+The final model is deployed via a **Flask web application** containerized with **Docker**.
+
+- **Hugging Face Environment**: Optimized to run the lightweight Custom CNN to satisfy free-tier memory constraints.
+- **Port Management**: Configured to bypass macOS native port conflicts (running on 5001 locally).
+
+---
+
+## ⚖️ Ethics & Limitations (Project Insight)
+A critical part of this project was auditing the **Geographic and Cultural bias** in the dataset:
+- **Representation Bias**: Vehicles like tuk-tuks or rural flatbed trucks are underrepresented compared to Western designs.
+- **Open-Set Limitations**: The model assumes every image belongs to one of its 10 classes (e.g., an apple would be forced into a "Frog" or "Truck" category).
+
+---
+
+## 📖 How to Explore
+1. **Source Code**: Check the [`src/`](./src/) directory for modularized Python scripts.
+2. **Notebooks**: View the experimental journey in [`notebooks_knowledge&presentation/`](./notebooks_knowledge&presentation/).
+3. **Report**: Detailed analysis is available in the full [`Report.md`](./Report.md).
+
+---
+*Developed during Ironhack's Data Analytics Bootcamp - 2026*
